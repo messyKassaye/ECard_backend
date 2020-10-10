@@ -10,11 +10,11 @@ class Company extends Model
     //
 
     public function address(){
-        return $this->hasOne(Address::class,'user_company_id');
+        return $this->hasOne(Address::class,'company_id');
     }
 
     public function verified(){
-        return $this->hasOne(CompanyUserVerification::class,'user_company_id');
+        return $this->hasOne(CompanyUserVerification::class,'company_id');
     }
 
     public function agents(){

@@ -2,10 +2,11 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Address;
 use Illuminate\Http\Request;
+use App\AgentPartnerRetailer;
 use Auth;
-class AddressController extends Controller
+use App\Http\Resources\AgentPartnersResource;
+class ConnectionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -36,42 +37,34 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         //
-        $address = new Address();
-        $address->region_id = $request->region_id;
-        $address->city_id = $request->city_id;
-        $address->specific_name =$request->specific_name;
-        $address->building_name = $request->building_name;
-        $address->floor_no = $request->floor_no;
-        if(Auth::user()->role[0]->id==2){
-            $address->company_id = Auth::user()->company->id;
-            $address->user_id = Auth::user()->id;
-        }else{
-            $address->user_id = Auth::user()->id;
-        }
-        
-        $address->save();
-        return response()->json(['status'=>true,'message'=>'Address is setted successfully']);
-
+        $agentPartneRetailer = new AgentPartnerRetailer();
+        $agentPartneRetailer->company_user_id = $request->company_user_id;
+        $agentPartneRetailer->agent_partner_retailer_id = Auth::user()->id;
+        $agentPartneRetailer->save();
+        return response()->json(['status'=>true,'message'=>'Your requested has been sent successfully']);
+   
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Address $address)
+    public function show($status)
     {
         //
+        $followRequest = AgentPartnerRetailer::where('status',$status)->where('company_user_id',Auth::user()->id)->get();
+        return AgentPartnersResource::collection($followRequest);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Address $address)
+    public function edit($id)
     {
         //
     }
@@ -80,21 +73,26 @@ class AddressController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Address $address)
+    public function update(Request $request, $id)
     {
         //
+        $agentPartneRetailer = AgentPartnerRetailer::find($id);
+        $agentPartneRetailer->status = $request->status;
+        $agentPartneRetailer->save();
+        return response()->json(['status'=>true,'message'=>'Agent request is accepted successfully']);
+    
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Address $address)
+    public function destroy($id)
     {
         //
     }

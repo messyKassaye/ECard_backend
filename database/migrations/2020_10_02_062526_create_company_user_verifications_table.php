@@ -15,8 +15,10 @@ class CreateCompanyUserVerificationsTable extends Migration
     {
         Schema::create('company_user_verifications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_company_id');
+            $table->integer('user_id')->default(0);
+            $table->integer('company_id')->default(0);
             $table->boolean('is_verified')->default(false);
+            $table->integer('verified_by');
             $table->timestamps();
         });
     }

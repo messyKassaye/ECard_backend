@@ -16,7 +16,8 @@ class CreateCardPricesTable extends Migration
         Schema::create('card_prices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->double('percentage');
-            $table->integer('company_user_id')->unique();
+            $table->integer('user_id')->default(0);
+            $table->integer('company_id')->default(0);
             $table->timestamps();
         });
     }

@@ -38,7 +38,8 @@ $api->version('v1', function (Router $api) {
 
         //admin routes
         $api->group(['prefix'=>'admin','middleware'=>'admin'],function (Router $api){
-          
+          $api->resource('customers','App\\Api\\V1\\Controllers\\AdminUserController');
+          $api->resource('verification','App\\Api\\V1\\Controllers\\CompanyUserVerificationController');
         });
 
         //admin routes
@@ -53,8 +54,11 @@ $api->version('v1', function (Router $api) {
         $api->resource('card_request','App\\Api\\V1\\Controllers\\CardRequestController');
         $api->resource('card_price','App\\Api\\V1\\Controllers\\CardPriceController');
         $api->resource('card_type','App\\Api\\V1\\Controllers\\CardTypeController');
-        $api->resource('follow','App\\Api\\V1\\Controllers\\AgentPartnerRetailerController');
+        $api->resource('connect','App\\Api\\V1\\Controllers\\ConnectionController');
         $api->resource('finances','App\\Api\\V1\\Controllers\\FinanceController');
+        $api->resource('near_by','App\\Api\\V1\\Controllers\\NearByPartnerAndAgentController');
+        $api->resource('bank_account','App\\Api\\V1\\Controllers\\BankAccountController');
+        $api->resource('banks','App\\Api\\V1\\Controllers\\BankController');
     });
 
     $api->get('hello', function() {
@@ -62,4 +66,7 @@ $api->version('v1', function (Router $api) {
             'message' => 'This is a simple example of item returned by your APIs. Everyone can see it.'
         ]);
     });
+
+    $api->resource('region_city','App\\Api\\V1\\Controllers\\RegionCityController');
+
 });

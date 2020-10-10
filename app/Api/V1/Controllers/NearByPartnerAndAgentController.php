@@ -2,10 +2,12 @@
 
 namespace App\Api\V1\Controllers;
 
-use App\Address;
 use Illuminate\Http\Request;
+use App\Address;
+use App\Http\Resources\AddressResource;
 use Auth;
-class AddressController extends Controller
+use App\AgentPartnerRetailer;
+class NearByPartnerAndAgentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,6 +17,22 @@ class AddressController extends Controller
     public function index()
     {
         //
+        if(Auth::user()->address==null){
+            return response()->json(
+                ['status'=>false,
+                'message'=>'address is not setted. Please set your address',
+                'data'=>[]]);
+        }else{
+            
+            $address = Address::where('region_id',Auth::user()->address->region_id)
+                                ->where('user_id','!=',Auth::user()->id)->get();
+            return response()->json(
+                ['status'=>true,
+                'message'=>'Partners near by you',
+                'data'=>AddressResource::collection($address)]);
+        }
+
+        
     }
 
     /**
@@ -36,42 +54,28 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         //
-        $address = new Address();
-        $address->region_id = $request->region_id;
-        $address->city_id = $request->city_id;
-        $address->specific_name =$request->specific_name;
-        $address->building_name = $request->building_name;
-        $address->floor_no = $request->floor_no;
-        if(Auth::user()->role[0]->id==2){
-            $address->company_id = Auth::user()->company->id;
-            $address->user_id = Auth::user()->id;
-        }else{
-            $address->user_id = Auth::user()->id;
-        }
-        
-        $address->save();
-        return response()->json(['status'=>true,'message'=>'Address is setted successfully']);
-
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Address $address)
+    public function show($id)
     {
         //
+        $address = Address::where('region_id',$id)->get();
+        return AddressResource::collection($address);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Address $address)
+    public function edit($id)
     {
         //
     }
@@ -80,10 +84,10 @@ class AddressController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Address $address)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -91,10 +95,10 @@ class AddressController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Address  $address
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Address $address)
+    public function destroy($id)
     {
         //
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use App\Bank;
 use Illuminate\Http\Request;
@@ -15,6 +15,7 @@ class BankController extends Controller
     public function index()
     {
         //
+        return Bank::all();
     }
 
     /**

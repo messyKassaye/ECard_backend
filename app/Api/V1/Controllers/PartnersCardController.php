@@ -44,10 +44,10 @@ class PartnersCardController extends Controller
         //
         $companyId = Auth::user()->company->id;
 
-        for($i=0;$i<=100;$i++){
+        for($i=0;$i<=$request->amount;$i++){
             Card::create([
                 'owner_id'=>$companyId,
-                'card_type_id'=>rand(1,6),
+                'card_type_id'=>$request->card_type_id,
                 'card_number'=>Str::random(10)
             ]);
         }
@@ -63,6 +63,7 @@ class PartnersCardController extends Controller
     public function show($id)
     {
         //
+        return response()->json(['status'=>true,'message'=>'Your are allowed to acces your cards']);
     }
 
     /**

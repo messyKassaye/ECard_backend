@@ -11,6 +11,8 @@ use App\Company;
 use App\Card;
 use App\CardPrice;
 use App\AgentPartnerRetailer;
+use App\Address;
+use Auth;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
@@ -54,6 +56,19 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(AgentPartnerRetailer::class,'company_user_id');
     }
 
+    public function address(){
+        return $this->hasOne(Address::class,'user_id');
+    }
+
+    public function verification(){
+        return $this->hasOne(CompanyUserVerification::class,'user_id');
+    }
+
+    public function connection()
+    {
+        return $this->hasOne(AgentPartnerRetailer::class,'company_user_id')
+        ->where('agent_partner_retailer_id',Auth::user()->id);
+    }
 
     /**
      * Automatically creates hash for the user password.

@@ -42,7 +42,6 @@ class CardRequestController extends Controller
     public function store(Request $request)
     {
         //
-        if($request->amount!=''){
         $cardRequest = new CardRequest();
         $cardRequest->requester_id =Auth::user()->id;
         $cardRequest->card_type_id = $request->card_type_id;
@@ -51,7 +50,6 @@ class CardRequestController extends Controller
         if($cardRequest->save()){
            event(new NewCardRequest($cardRequest));
           return response()->json(['status'=>true,'message'=>'Card request addedd successfully']);
-        }
         }
     }
 
@@ -65,11 +63,17 @@ class CardRequestController extends Controller
     {
         //
         //
-        $cardRequest = CardRequest::where(function ($q) {
-            $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
-        })->where('status',$status)->get();
-    
-        return CardRequestResource::collection($cardRequest);
+        if(Auth::user()->role[0]->id==2){
+            $cardRequest = CardRequest::where(function ($q) {
+                $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
+            })->where('status',$status)->get();
+            return CardRequestResource::collection($cardRequest);
+        }else{
+
+            $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->where('status',$status)->get();
+            return CardRequestResource::collection($cardRequest);
+        }
+        
     }
 
     /**

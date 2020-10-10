@@ -36,6 +36,13 @@ class CompanyUserVerificationController extends Controller
     public function store(Request $request)
     {
         //
+        $companyUserVerification = new CompanyUserVerification();
+        $companyUserVerification->user_id = $request->user_id;
+        $companyUserVerification->company_id =$request->company_id;
+        $companyUserVerification->verified_by = Auth::user()->id;
+        if($companyUserVerification->save()){
+            return response()->json(['status'=>true,'message'=>'Verified successfully']);
+        }
     }
 
     /**

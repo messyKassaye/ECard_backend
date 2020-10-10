@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'role_types'=>'Admin,Partner,Agnet,Retailer,Saler'
+    'role_types'=>'Admin,Partner,Agent,Retailer,Saler'
 ];

@@ -16,9 +16,7 @@ class CardPriceController extends Controller
     {
         //
         $userId = Auth::user()->id;
-        $cardPrice = CardPrice::where(function ($q) {
-            $q->where('company_user_id', Auth::user()->company->id)->orWhere('company_user_id', Auth::user()->id);
-        })->with('cardType')->get();
+        $cardPrice = CardPrice::where('user_id',Auth::user()->id)->with('cardType')->get();
         return $cardPrice;
     }
 
@@ -44,10 +42,9 @@ class CardPriceController extends Controller
         $cardPrice = new CardPrice();
         $cardPrice->percentage = $request->percentage;
         if(Auth::user()->role[0]->id==2){
-            $cardPrice->company_user_id = Auth::user()->company->id;
-        }else{
-            $cardPrice->company_user_id = Auth::user()->id;
+            $cardPrice->company_id = Auth::user()->company->id;
         }
+        $cardPrice->user_id = Auth::user()->id;
         $cardPrice->save();
         return response()->json(['status'=>true,'message'=>'Card price is setted successfully','card_price'=>CardPrice::where('id',$cardPrice->id)->with('cardType')->get()]);
 
