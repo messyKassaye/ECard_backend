@@ -36,6 +36,13 @@ class CardRequestPaymentController extends Controller
     public function store(Request $request)
     {
         //
+        $cardRequestPayment = new CardRequestPayment();
+        $cardRequestPayment->card_request_id = $request->card_request_id;
+        $cardRequestPayment->bank_id = $request->bank_id;
+        $cardRequestPayment->transaction_ref_number = $request->reference_number;
+        if($cardRequestPayment->save()){
+            return response()->json(['status'=>true,'index'=>$request->index+1,'message'=>'Payment is done']);
+        }
     }
 
     /**

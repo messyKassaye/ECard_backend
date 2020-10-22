@@ -21,8 +21,8 @@ class CardRequestResource extends JsonResource
             'id'=>$this->id,
             'card_type'=>$this->cardType,
             'amount'=>$this->amount,
-            'user'=>User::where('id',$this->requester_id)->with('role')->get(),
-            'price'=>CardPrice::where('company_user_id',Auth::user()->role[0]->id==2?Auth::user()->company->id:Auth::user()->id)->get(),
+            'user'=>User::where('id',$this->requester_id)->with('role')->with('cardPrice')->get(),
+            'price'=>CardPrice::where('user_id',Auth::user()->role[0]->id==2?Auth::user()->company->id:Auth::user()->id)->get(),
             'payment'=>new CardRequestPaymentResource($this->payment)
         ];
     }

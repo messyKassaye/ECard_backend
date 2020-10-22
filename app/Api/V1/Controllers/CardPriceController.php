@@ -43,8 +43,11 @@ class CardPriceController extends Controller
         $cardPrice->percentage = $request->percentage;
         if(Auth::user()->role[0]->id==2){
             $cardPrice->company_id = Auth::user()->company->id;
+            $cardPrice->user_id = Auth::user()->id;
+            $cardPrice->percentage_value=round($request->percentage/100,2);
         }
         $cardPrice->user_id = Auth::user()->id;
+        $cardPrice->percentage_value=round($request->percentage/100,2);
         $cardPrice->save();
         return response()->json(['status'=>true,'message'=>'Card price is setted successfully','card_price'=>CardPrice::where('id',$cardPrice->id)->with('cardType')->get()]);
 

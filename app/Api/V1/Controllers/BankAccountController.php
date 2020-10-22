@@ -82,7 +82,6 @@ class BankAccountController extends Controller
     {
         //
         $bankAccount = BankAccount::find($id);
-        $bankAccount->bank_id = $request->bank_id;
         $bankAccount->user_id = Auth::user()->id;
         $bankAccount->account_number = $request->account_number;
         $bankAccount->holder_full_name = $request->holder_full_name;

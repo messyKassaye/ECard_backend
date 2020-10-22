@@ -42,9 +42,9 @@ class PartnersCardController extends Controller
     public function store(Request $request)
     {
         //
-        $companyId = Auth::user()->company->id;
+        $companyId = Auth::user()->id;
 
-        for($i=0;$i<=$request->amount;$i++){
+        for($i=0;$i<$request->amount;$i++){
             Card::create([
                 'owner_id'=>$companyId,
                 'card_type_id'=>$request->card_type_id,

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Address;
 use App\Http\Resources\AddressResource;
 use Auth;
-use App\AgentPartnerRetailer;
+
 class NearByPartnerAndAgentController extends Controller
 {
     /**

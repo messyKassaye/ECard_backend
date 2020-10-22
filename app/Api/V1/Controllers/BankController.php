@@ -4,7 +4,7 @@ namespace App\Api\V1\Controllers;
 
 use App\Bank;
 use Illuminate\Http\Request;
-
+use App\Http\Resources\BankResource;
 class BankController extends Controller
 {
     /**
@@ -15,7 +15,8 @@ class BankController extends Controller
     public function index()
     {
         //
-        return Bank::all();
+        $banks= Bank::all();
+        return BankResource::collection($banks);
     }
 
     /**

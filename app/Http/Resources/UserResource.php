@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\AgentPartnersResource;
+use App\Http\Resources\VerificationResource;
+use App\Http\Resources\NotificationResource;
 class UserResource extends JsonResource
 {
     /**
@@ -28,6 +30,9 @@ class UserResource extends JsonResource
             'relations' => [
                 'role' => $this->role,
                 'company'=>new CompanyResource($this->company),
+                'verification'=>new VerificationResource($this->verification),
+                'device'=>$this->device,
+                'notification'=>NotificationResource::collection($this->notification)
             ]
 
         ];

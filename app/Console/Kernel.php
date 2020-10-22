@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        Commands\CardRequestProccesser::class,
+        Commands\FinanceCalculator::class
     ];
 
     /**
@@ -24,6 +26,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('proccess:card_request')
+            ->everyMinute();
+        $schedule->command('finance:calculator')
+            ->everyMinute();
+
         // $schedule->command('inspire')
         //          ->hourly();
     }

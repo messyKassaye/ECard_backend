@@ -22,7 +22,7 @@ class AddressResource extends JsonResource
             'city_name'=>RegionCity::find($this->city_id)->name,
             'user'=>User::where('id',$this->user->id)
             ->with('role')->with('verification')
-            ->with('company')->with('connection')->get()
+            ->with('company')->with('myAgents')->with('myPartners')->with('myRetailer')->get()
             
         ];
     }

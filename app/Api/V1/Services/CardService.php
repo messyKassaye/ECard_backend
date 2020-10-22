@@ -11,10 +11,10 @@ use App\Finance;
 class CardService
 {
    
-    public function checkPartnersCardAmount($cardTypeId,$amount)
+    public function checkPartnersCardAmount($cardTypeId,$ownerID,$amount)
     {
         $cards = Card::where('card_type_id',$cardTypeId)
-        ->where('owner_id',Auth::user()->company->id)
+        ->where('owner_id',$ownerID)
         ->where('status','not_sold')->get();
         if(count($cards)>=$amount){
             return 1;
@@ -23,10 +23,10 @@ class CardService
         }
     }
 
-    public function partnersCardTransaction($cardRequest)
+    public function partnersCardTransaction($cardRequest,$ownerID)
     {
         $cards = Card::where('card_type_id',$cardRequest->card_type_id)
-        ->where('owner_id',Auth::user()->company->id)
+        ->where('owner_id',$ownerID)
         ->where('status','not_sold')->take($cardRequest->amount)->get();
         foreach($cards as $card){
             $currentCard = Card::find($card->id);
@@ -41,27 +41,27 @@ class CardService
 
         //approving card request
         $cardRequestApproval = new CardRequestApproval();
-        $cardRequestApproval->user_id = Auth::user()->id;
+        $cardRequestApproval->user_id = $ownerID;
         $cardRequests->approval()->save($cardRequestApproval);
 
-        $unitPrice = $this->calculator($cardRequest->card_type_id);
-        $totalPrice = round($this->calculator($cardRequest->card_type_id)*$cardRequest->amount,2);
+        $unitPrice = $this->calculator($cardRequest->card_type_id,$ownerID);
+        $totalPrice = round($this->calculator($cardRequest->card_type_id,$ownerID)*$cardRequest->amount,2);
         $receipet = new Receipt();
         $receipet->service_type = 'Mobile card sells';
         $receipet->card_request_id = $cardRequest->id;
         $receipet->unit_price =$unitPrice;
         $receipet->quantity = $cardRequest->amount;
         $receipet->total_price =$totalPrice;
-        $receipet->company_user_id = Auth::user()->company->id;
-        $receipet->proccessed_by = Auth::user()->id;
+        $receipet->company_user_id = $ownerID;
+        $receipet->proccessed_by = $ownerID;
         $cardRequests->receipt()->save($receipet);
 
         //update finance
-        $finance = Finance::where('company_user_id',Auth::user()->company->id)->get();
+        $finance = Finance::where('company_user_id',$ownerID)->get();
         if(count($finance)<=0){
-            $this->saveFinace(Auth::user()->company->id,$totalPrice);
+            $this->saveFinace($ownerID,$totalPrice);
         }else{
-            $this->updateFinance(Auth::user()->company->id,$totalPrice);
+            $this->updateFinance($ownerID,$totalPrice);
         }
         return response()->json(['status'=>true,
         'card_request'=>$cardRequests,
@@ -70,10 +70,10 @@ class CardService
 
     }
 
-    public function calculator($cardTypeId)
+    public function calculator($cardTypeId,$ownerID)
     {
-       $cardPrice = CardPrice::where('company_user_id',Auth::user()->company->id)->get();
-       return CardType::find($cardTypeId)->value*$cardPrice[0]->percentage;//*CardPrice::where('company_user_id',Auth::user()->id)->get()[0]['percentage'];
+       $cardPrice = CardPrice::where('user_id',$ownerID)->get();
+       return CardType::find($cardTypeId)->value*$cardPrice[0]->percentage_value;//*CardPrice::where('company_user_id',Auth::user()->id)->get()[0]['percentage'];
 
         
     }
@@ -99,10 +99,31 @@ class CardService
 
     public function currentGoal($userId){
         $cards =Card::where('owner_id',$userId)->get();
-        $currentGoalTotalBalance=0;
+        
+        if(count($cards)>0){
+
+            $currentGoalTotalBalance=0;
         foreach($cards as $card){
-            $currentGoalTotalBalance += $this->calculator($card->card_type_id);
+            $currentGoalTotalBalance += $this->calculator($card->card_type_id,$userId);
         }
-       return round($currentGoalTotalBalance,2);
+
+        $finances = Finance::where('company_user_id',$userId)->get();
+        if(count($finances)>0){
+           
+            $finance = Finance::find($finances[0]['id']);
+            $finance->total_goal = round($currentGoalTotalBalance,2);
+            $finance->save();
+
+        }else{
+            $finance = new Finance();
+            $finance->company_user_id = $userId;
+            $finance->total_goal = $currentGoalTotalBalance;
+            $finance->total_balance=0.0;
+            $finance->total_goal = round($currentGoalTotalBalance,2);
+            $finance->save();
+        }
+
+        }
+        
     }
 }

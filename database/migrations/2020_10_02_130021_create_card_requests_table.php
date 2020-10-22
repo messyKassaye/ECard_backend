@@ -18,6 +18,7 @@ class CreateCardRequestsTable extends Migration
             $table->integer('requested_to');
             $table->integer('requester_id');
             $table->integer('card_type_id');
+            $table->integer('payment_type_id');
             $table->integer('amount');
             $table->string('status')->default('on_progress');
             $table->timestamps();

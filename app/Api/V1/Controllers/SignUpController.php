@@ -10,6 +10,7 @@ use App\Api\V1\Requests\SignUpRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Role;
 use Auth;
+use App\Finance;
 class SignUpController extends Controller
 {
     public function signUp(SignUpRequest $request, JWTAuth $JWTAuth)
@@ -32,6 +33,12 @@ class SignUpController extends Controller
                 if($user->save()){
                     $role = Role::find($request->role_id);
                     $user->role()->sync($role);
+
+                    $finance = new Finance();
+                    $finance->company_user_id = $user->id;
+                    $finance->total_balance = 0.0;
+                    $finance->total_goal = 0.0;
+                    $finance->save();
  
                     //login after sign up
                     $credentials = $request->only(['email', 'password']);

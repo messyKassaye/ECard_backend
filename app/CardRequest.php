@@ -30,4 +30,8 @@ class CardRequest extends Model
     public function receipt(){
         return $this->hasMany(Receipt::class);
     }
+
+    public function paymentType(){
+        return $this->belongsTo(PaymentType::class);
+    }
 }

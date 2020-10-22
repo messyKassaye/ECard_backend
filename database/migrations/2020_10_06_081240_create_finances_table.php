@@ -17,6 +17,7 @@ class CreateFinancesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('company_user_id');
             $table->double('total_balance');
+            $table->double('total_goal');
             $table->timestamps();
         });
     }

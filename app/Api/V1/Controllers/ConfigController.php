@@ -9,7 +9,9 @@ use App\User;
 use App\Bank;
 use App\RegionCity;
 use App\CardType;
+use App\Entity;
 use Illuminate\Support\Facades\DB;
+use App\PaymentType;
 class ConfigController extends Controller
 {
     /**
@@ -41,6 +43,23 @@ class ConfigController extends Controller
     public function store(Request $request)
     {
         //
+        $paymentTypes = explode(',',Config::get('paymentType.payment_types'));
+        $paymentTypesDescription = explode(',',Config::get('paymentType.description'));
+        for($p=0;$p<count($paymentTypes);$p++){
+            $paymentType = new PaymentType();
+            $paymentType->name = $paymentTypes[$p];
+            $paymentType->description = $paymentTypesDescription[$p];
+            $paymentType->save();
+        }
+
+        $entitites = explode(',',Config::get('entity.entities'));
+        $messages = explode(',',Config::get('entity.messages'));
+        for($en=0;$en<count($entitites);$en++){
+            $entity = new Entity();
+            $entity->name = $entitites[$en];
+            $entity->message = $messages[$en];
+            $entity->save();
+        }
 
         $banks = explode(',',Config::get('banks.banks'));
         for($b=0;$b<count($banks);$b++){
@@ -95,6 +114,8 @@ class ConfigController extends Controller
         $user->password = env('ADMIN_PASSWORD');
         $user->save();
         $user->role()->sync(Role::find(1));
+
+        
     }
 
     /**

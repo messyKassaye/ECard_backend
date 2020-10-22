@@ -3,8 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\User;
-class AgentPartnersResource extends JsonResource
+
+class DownloadCardResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,7 +16,7 @@ class AgentPartnersResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'user'=>User::where('id',$this->user->id)->with('role')->get()
+            'card_number'=>$this->card_number
         ];
     }
 }

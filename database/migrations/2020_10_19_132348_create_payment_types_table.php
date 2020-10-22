@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAgentPartnerRetailersTable extends Migration
+class CreatePaymentTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateAgentPartnerRetailersTable extends Migration
      */
     public function up()
     {
-        Schema::create('agent_partner_retailers', function (Blueprint $table) {
+        Schema::create('payment_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('company_user_id');
-            $table->integer('agent_partner_retailer_id');
-            $table->string('status')->default('waiting');
+            $table->string('name');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ class CreateAgentPartnerRetailersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('agent_partner_retailers');
+        Schema::dropIfExists('payment_types');
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Events\NewCardRequest;
 use App\Http\Resources\CardRequestResource;
+use App\Api\V1\Services\NotificationService;
+use App\CardType;
 class CardRequestController extends Controller
 {
     /**
@@ -14,12 +16,23 @@ class CardRequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService){
+        $this->notificationService = $notificationService;
+    }
     public function index()
     {
         //
-        $cardRequest = CardRequest::where(function ($q) {
-            $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
-        })->get();
+        $cardRequest='';
+        if(Auth::user()->role[0]->id==2){
+            $cardRequest = CardRequest::where(function ($q) {
+                $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
+            })->get();
+        }else{
+            $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->get();
+        }
+    
         return CardRequestResource::collection($cardRequest);
     }
 
@@ -47,9 +60,13 @@ class CardRequestController extends Controller
         $cardRequest->card_type_id = $request->card_type_id;
         $cardRequest->amount = $request->amount;
         $cardRequest->requested_to = $request->company_agent_id;
+        $cardRequest->payment_type_id = $request->payment_type_id;
         if($cardRequest->save()){
-           event(new NewCardRequest($cardRequest));
-          return response()->json(['status'=>true,'message'=>'Card request addedd successfully']);
+           //event(new NewCardRequest($cardRequest));
+           $message = Auth::user()->first_name.' needs '.$request->amount.' of '.CardType::find($request->card_type_id)->value.' Birr cards from you.';
+           $this->notificationService->notify(2,Auth::user()->id,$request->company_agent_id,$message,'card_request/'.$cardRequest->id,$cardRequest->id);
+          return response()->json(['status'=>true,'card_request'=>$cardRequest,
+          'index'=>$request->index+1,'message'=>'Your card is send successfully']);
         }
     }
 
@@ -99,8 +116,12 @@ class CardRequestController extends Controller
         //
         $cardRequest = CardRequest::find($id);
         $cardRequest->status = $request->status;
-        $cardRequest->save();
-        return response()->json(['status'=>true,'message'=>'Your request is done successfully']);
+        if($cardRequest->requested_to==Auth::user()->id){
+            $cardRequest->save();
+             return response()->json(['status'=>true,'message'=>'Your request is done successfully']);
+        }else{
+            return response()->json(['status'=>false,'message'=>'You do not have the right to update this data']);
+        }
     }
 
     /**

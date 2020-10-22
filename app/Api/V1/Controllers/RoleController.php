@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Api\V1\Controllers;
 
 use App\Role;
 use Illuminate\Http\Request;
-
+use App\Http\Resources\RoleResource;
 class RoleController extends Controller
 {
     /**
@@ -44,9 +44,11 @@ class RoleController extends Controller
      * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function show(Role $role)
+    public function show($id)
     {
         //
+        $role = Role::find($id);
+        return new RoleResource($role);
     }
 
     /**

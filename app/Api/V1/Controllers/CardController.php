@@ -4,7 +4,8 @@ namespace App\Api\V1\Controllers;
 
 use App\Card;
 use Illuminate\Http\Request;
-
+use App\CardType;
+use App\Http\Resources\PartnersCardTypeResource;
 class CardController extends Controller
 {
     /**
@@ -14,6 +15,8 @@ class CardController extends Controller
      */
     public function index()
     {
+        $cards =CardType::all(); 
+        return PartnersCardTypeResource::collection($cards);
         //
     }
 
@@ -67,9 +70,13 @@ class CardController extends Controller
      * @param  \App\Card  $card
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Card $card)
+    public function update(Request $request,$id)
     {
         //
+        $card = Card::find($id);
+        $card->status = $request->status;
+        $card->save();
+        return respone()->json(['status'=>true,'message'=>'Card update successfully']);
     }
 
     /**

@@ -20,18 +20,9 @@ class FinanceController extends Controller
     public function index()
     {
         //
-        $finance;
-        if(Auth::user()->role[0]->id==2){
-            $finance = Finance::where('company_user_id',Auth::user()->company->id)->get();
-            return response()->json(['status'=>true,
-        'finance'=>$finance,
-        'current_goal'=>$this->cardService->currentGoal(Auth::user()->company->id)]);
-        }else{
             $finance = Finance::where('company_user_id',Auth::user()->id)->get();
             return response()->json(['status'=>true,
-            'finance'=>$finance,
-            'current_goal'=>$this->cardService->currentGoal(Auth::user()->id)]);
-        }
+            'finance'=>$finance]);
         
     }
 

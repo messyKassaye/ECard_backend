@@ -13,6 +13,12 @@ use App\CardPrice;
 use App\AgentPartnerRetailer;
 use App\Address;
 use Auth;
+use App\CompanyUserVerification;
+use App\BankAccount;
+use App\Device;
+use App\Notification;
+use App\MyAgent;
+use App\MyRetailer;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
@@ -67,7 +73,38 @@ class User extends Authenticatable implements JWTSubject
     public function connection()
     {
         return $this->hasOne(AgentPartnerRetailer::class,'company_user_id')
-        ->where('agent_partner_retailer_id',Auth::user()->id);
+        ->where('agent_retailer_id',Auth::user()->id);
+    }
+
+    public function myAgents()
+    {
+        return $this->hasMany(MyAgent::class,'partner_id');
+    }
+
+    public function myPartners()
+    {
+        return $this->hasMany(MyAgent::class,'agent_id');
+    }
+
+    public function myRetailer(){
+        return $this->hasMany(MyRetailer::class,'agent_id');
+    }
+
+    public function retailersAgent(){
+        return $this->hasMany(MyRetailer::class,'retailer_id');
+    }
+
+    public function bankAccount()
+    {
+        return $this->hasMany(BankAccount::class)->with('bank');
+    }
+
+    public function device(){
+        return $this->hasMany(Device::class,'retailer_id');
+    }
+
+    public function notification(){
+        return $this->hasMany(Notification::class,'receiver_id')->where('status',false);
     }
 
     /**

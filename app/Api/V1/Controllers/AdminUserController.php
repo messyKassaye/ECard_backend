@@ -3,7 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use Illuminate\Http\Request;
-use App\Role;
+use App\User;
+use App\Http\Resources\UserResource;
 class AdminUserController extends Controller
 {
     /**
@@ -14,8 +15,8 @@ class AdminUserController extends Controller
     public function index()
     {
         //
-        $user = Role::where('id',2)->with('user')->get();
-        return $user;
+        $user = User::where('id','!=',1)->get();
+        return UserResource::collection($user);
     }
 
     /**
