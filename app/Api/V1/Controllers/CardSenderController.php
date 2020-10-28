@@ -10,6 +10,7 @@ use App\Http\Resources\CardRequestResource;
 use App\Api\V1\Services\NotificationService;
 use App\CardType;
 use App\Api\V1\Services\CardService;
+use App\Api\V1\Services\CardSummerService;
 class CardSenderController extends Controller
 {
     /**
@@ -19,14 +20,17 @@ class CardSenderController extends Controller
      */
     protected $notificationService;
     protected $cardService;
-    public function __construct(NotificationService $notificationService,CardService $cardService){
+    protected $cardSummerService;
+    public function __construct(NotificationService $notificationService,CardService $cardService,CardSummerService $cardSummerService){
         $this->notificationService = $notificationService;
         $this->cardService = $cardService;
+        $this->cardSummerService = $cardSummerService;
     }
     
     public function index()
     {
         //
+        $this->cardSummerService->sumCards();
     }
 
     /**
@@ -65,7 +69,7 @@ class CardSenderController extends Controller
             $cardRequest->payment_type_id = $request->payment_type_id;
             $cardRequest->status = $request->status;
             if($cardRequest->save()){
-            event(new NewCardRequest($cardRequest));
+            //event(new NewCardRequest($cardRequest));
             $message = Auth::user()->first_name.' Send '.$request->amount.' of '.CardType::find($request->card_type_id)->value.' Birr cards to you.';
             $this->notificationService->notify(3,Auth::user()->id,$request->requester_id,$message,'card_request/'.$cardRequest->id,$cardRequest->id);
             return response()->json(['status'=>true,'card_request'=>$cardRequest,'message'=>'Card is send successfully']);

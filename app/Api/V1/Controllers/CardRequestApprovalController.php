@@ -95,9 +95,22 @@ class CardRequestApprovalController extends Controller
      * @param  \App\CardRequestApproval  $cardRequestApproval
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CardRequestApproval $cardRequestApproval)
+    public function update(Request $request, $id)
     {
         //
+        $cardRequest= CardRequest::find($id);
+        $checkResult= $this->cardService->checkPartnersCardAmount($cardRequest->card_type_id,Auth::user()->id,$cardRequest->amount);
+        if($checkResult==0){
+            $cardType = CardType::find($cardRequest->card_type_id);
+            return response()->json([
+                'status'=>true,
+                'message'=>'You do not have enough '.$cardType->value.' Birr card to sell. get card from your card provider']);
+        }else{
+            $cardRequest->status = $request->status;
+            $cardRequest->payment_type_id = $request->payment_type_id;
+            $cardRequest->save();
+            return response()->json(['status'=>true,'message'=>'Your card request is updated successfully']);
+        }
     }
 
     /**

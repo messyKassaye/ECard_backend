@@ -5,6 +5,8 @@ namespace App\Api\V1\Controllers;
 use App\CompanyUserVerification;
 use Illuminate\Http\Request;
 use Auth;
+use App\User;
+
 class CompanyUserVerificationController extends Controller
 {
     /**
@@ -36,12 +38,17 @@ class CompanyUserVerificationController extends Controller
     public function store(Request $request)
     {
         //
-        $companyUserVerification = new CompanyUserVerification();
-        $companyUserVerification->user_id = $request->user_id;
-        $companyUserVerification->verified_by = Auth::user()->id;
-        $companyUserVerification->is_verified = true;
-        if($companyUserVerification->save()){
-            return response()->json(['status'=>true,'message'=>'Verified successfully']);
+        $userVerification = User::find(Auth::user()->id)->verification;
+        if($userVerification!=null){
+            $companyUserVerification = new CompanyUserVerification();
+            $companyUserVerification->user_id = $request->user_id;
+            $companyUserVerification->verified_by = Auth::user()->id;
+            $companyUserVerification->is_verified = true;
+            if($companyUserVerification->save()){
+                return response()->json(['status'=>true,'message'=>'Verified successfully']);
+            }
+        }else{
+            return response()->json(['status'=>false,'message'=>'You are not verified. So you can not verify others']);
         }
     }
 

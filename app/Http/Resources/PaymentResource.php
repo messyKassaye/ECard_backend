@@ -3,10 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Card;
-use Auth;
-use App\TotalCardNumber;
-class PartnersCardTypeResource extends JsonResource
+
+class PaymentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +14,10 @@ class PartnersCardTypeResource extends JsonResource
      */
     public function toArray($request)
     {
-        $cards = TotalCardNumber::where('card_type_id',$this->id)
-        ->where('user_id',Auth::user()->id)->get();
         return [
             'id'=>$this->id,
-            'value'=>$this->value,
-            'name'=>$this->name,
-            'total_amount'=>$cards[0]->amount
+            'bank'=>$this->bank,
+            'ref_number'=>$this->transaction_ref_number
         ];
     }
 }

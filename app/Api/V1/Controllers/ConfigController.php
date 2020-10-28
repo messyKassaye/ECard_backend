@@ -107,9 +107,6 @@ class ConfigController extends Controller
 
         $user = new User();
         $user->first_name = 'Meseret';
-        $user->last_name ='Kassaye';
-        $user->user_name ='admin123';
-        $user->email ='meseret.kassayes@gmail.com';
         $user->phone = '0923644545';
         $user->password = env('ADMIN_PASSWORD');
         $user->save();

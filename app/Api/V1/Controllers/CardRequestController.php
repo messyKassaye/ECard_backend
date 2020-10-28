@@ -24,14 +24,7 @@ class CardRequestController extends Controller
     public function index()
     {
         //
-        $cardRequest='';
-        if(Auth::user()->role[0]->id==2){
-            $cardRequest = CardRequest::where(function ($q) {
-                $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
-            })->get();
-        }else{
-            $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->get();
-        }
+        $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->get();
     
         return CardRequestResource::collection($cardRequest);
     }
@@ -80,16 +73,8 @@ class CardRequestController extends Controller
     {
         //
         //
-        if(Auth::user()->role[0]->id==2){
-            $cardRequest = CardRequest::where(function ($q) {
-                $q->where('requested_to', Auth::user()->company->id)->orWhere('requested_to', Auth::user()->id);
-            })->where('status',$status)->get();
-            return CardRequestResource::collection($cardRequest);
-        }else{
-
-            $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->where('status',$status)->get();
-            return CardRequestResource::collection($cardRequest);
-        }
+        $cardRequest = CardRequest::where('requested_to', Auth::user()->id)->where('status',$status)->get();
+        return CardRequestResource::collection($cardRequest);
         
     }
 

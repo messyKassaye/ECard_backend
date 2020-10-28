@@ -79,6 +79,7 @@ $api->version('v1', function (Router $api) {
         $api->resource('notification','App\\Api\\V1\\Controllers\\NotificationController');
         $api->resource('payment_types','App\\Api\\V1\\Controllers\\PaymentTypeController');
         $api->resource('roles','App\\Api\\V1\\Controllers\\RoleController');
+        $api->resource('sell_and_buy','App\\Api\\V1\\Controllers\\SellAndBuyController');
 
         $api->resource('partner_agent','App\\Api\\V1\\Controllers\\MyAgentController');
 

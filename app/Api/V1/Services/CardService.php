@@ -8,15 +8,15 @@ use App\Receipt;
 use App\CardType;
 use App\CardPrice;
 use App\Finance;
+use App\TotalCardNumber;
 class CardService
 {
    
     public function checkPartnersCardAmount($cardTypeId,$ownerID,$amount)
     {
-        $cards = Card::where('card_type_id',$cardTypeId)
-        ->where('owner_id',$ownerID)
-        ->where('status','not_sold')->get();
-        if(count($cards)>=$amount){
+        $cards = TotalCardNumber::where('card_type_id',$cardTypeId)
+        ->where('user_id',$ownerID)->get();
+        if($cards[0]->amount>=$amount){
             return 1;
         }else{
           return 0;

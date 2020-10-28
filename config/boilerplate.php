@@ -12,9 +12,7 @@ return [
         // here you can specify some validation rules for your sign-in request
         'validation_rules' => [
             'first_name' => 'required',
-            'last_name'=>'required',
-            'role_id'=>'required',
-            'email' => 'required|email',
+            'phone' => 'required',
             'password' => 'required'
         ]
     ],
@@ -24,7 +22,7 @@ return [
 
         // here you can specify some validation rules for your login request
         'validation_rules' => [
-            'email' => 'required|email',
+            'phone' => 'required',
             'password' => 'required'
         ]
     ],
@@ -34,7 +32,7 @@ return [
 
         // here you can specify some validation rules for your password recovery procedure
         'validation_rules' => [
-            'email' => 'required|email'
+            'phone' => 'required'
         ]
     ],
 
