@@ -67,8 +67,21 @@ class MyAgentController extends Controller
             }
 
         }else{
-            $myAgent->agent_id = Auth::user()->id;
-            $myAgent->partner_id = $request->partner_id;
+
+            $checkOuts =MyAgent::where('agent_id',Auth::user()->id)
+            ->where('partner_id',$request->partner_id)
+            ->get();
+            if(count($checkOuts)<=0){
+                $myAgent->agent_id = Auth::user()->id;
+                $myAgent->partner_id = $request->partner_id;
+                $myAgent->save();
+                $message = Auth::user()->first_name." sents you let's work together request. do you need to work with ".Auth::user()->first_name;
+                $this->notificationService->notify(1,Auth::user()->id,$request->partner_id,$message,'notification/',$myAgent->id);
+                return response()->json(['status'=>true,'message'=>"your let's work together request has been sent"]);        
+            
+            }else{
+                return response()->json(['status'=>true,'message'=>"your let's work together request has been sent"]);        
+            }
         }
 
      }

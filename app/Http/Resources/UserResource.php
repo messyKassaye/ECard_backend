@@ -29,6 +29,8 @@ class UserResource extends JsonResource
             ],
             'relations' => [
                 'role' => $this->role,
+                'card_price'=>$this->cardPrice,
+                'bank_account'=>$this->bankAccount,
                 'company'=>new CompanyResource($this->company),
                 'verification'=>new VerificationResource($this->verification),
                 'device'=>$this->device,
